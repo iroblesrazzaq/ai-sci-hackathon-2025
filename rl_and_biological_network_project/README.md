@@ -6,7 +6,7 @@ source setup_rl_and_biological_networks.sh
 ```
 A conda envrionemnt is created that uses the pytorch packages listed in rl_and_biological_networks_env.yml
 
-This environment enables teams to build and run their own ML models. We think that Deep Q-Networks (harder) and Multi-Armed Bandits (easier) are excellent choices for this task. However, there might be even better alternatives out there waiting for you to be discovered.
+This environment enables teams to build and run their own ML models. We think that Deep Q-Networks (harder) and Multi-Armed Bandits (easier) are excellent choices for this task. However, there might be even better alternatives out there waiting to be discovered.
 
 We advice using pytorch, but you can also set up your own environments. We refer you to the docs for th list of possible tech stacks:
  - [PyTorch](https://github.com/pytorch)
