@@ -249,7 +249,7 @@ total_be = []
 
 fail_count = 0
 
-PRINT_GRAPHS = True
+PRINT_GRAPHS = False
 
 for i,vali in enumerate(training_molecules):
 
@@ -279,6 +279,19 @@ for i,vali in enumerate(training_molecules):
             molec_comm[i].append(comm_data_clean[j])
 
             total_be.append(be_data_clean[j])
+
+    ## additional dataset error correction 
+    if molec_sm[i][0] == "[N+]([O-])(F)(F)F":
+        molec_cl[i][0] = "O 1s"
+
+    if molec_sm[i][0] == "S1SSSSSSS1":
+        molec_cl[i][0] = "S 2s"
+
+    if molec_sm[i][0] == "[Ti]":
+        molec_sm[i][0] = "[Tl]"
+        molec_cl[i][0] = "Tl 4f7/2"
+        vali = "[Tl]"
+
 
     raw_data[molec_sm[i][0]] = {"chemical_formula": [], "orbitals": [], "binding_energies": [], "references": []}
 

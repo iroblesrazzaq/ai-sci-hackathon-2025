@@ -14550,7 +14550,7 @@
       "ONF3"
     ],
     "orbitals": [
-      "F 1s",
+      "O 1s",
       "N 1s",
       "N 1s"
     ],
@@ -18805,7 +18805,7 @@
       "S8"
     ],
     "orbitals": [
-      "S 1s",
+      "S 2s",
       "S 2p3/2"
     ],
     "binding_energies": [
@@ -19361,12 +19361,12 @@
       "Data obtained from Jolly et al., At. Data Nucl. Data Tables 31, 433 (1984). (Reference(s) 154 in Jolly et al.)"
     ]
   },
-  "[Ti]": {
+  "[Tl]": {
     "chemical_formula": [
       "Ti"
     ],
     "orbitals": [
-      "Ti 4f7/2"
+      "Tl 4f7/2"
     ],
     "binding_energies": [
       125.75
