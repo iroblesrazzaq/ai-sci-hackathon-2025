@@ -11,16 +11,17 @@ class DynamicStatePCA():
         state_dim       (int) number of dimensions you want your state space to have
         """
         self.state_dim = state_dim
-        self.PCA       = PCA(n_components=state_dim)
+        self.PCA       = PCA(n_components=self.state_dim)
         
         # Fit dummy data to initialize PCA
-        self.PCA.fit(np.random.randn(max(4*20,state_dim),4*20))
+        self.PCA.fit(np.random.randn(max(4*20,self.state_dim),4*20))
         
     def fit(self,spikes,elecs):
         """
         This function is executed when creating a state characterization. Used only in dynamic state functions.
         """
         X = np.zeros((len(spikes),4*20))
+        
         for i in range(X.shape[0]):
             if len(spikes[i]) == 0:
                 continue

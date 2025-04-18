@@ -2,6 +2,7 @@
 #SBATCH --account=ai4s-hackathon
 #SBATCH --reservation=ai4s-hackathon
 #SBATCH -p schmidt-gpu
+#SBATCH --qos=schmidt
 #SBATCH --gres=gpu:1
 #SBATCH --time 10:00
 

@@ -100,6 +100,5 @@ To ensure fair resource sharing, minimize the use of interactive jobs and Jupyte
 
 ## Useful Links
 
- - Teams & Mentors [Spreadsheat](https://docs.google.com/spreadsheets/d/1QbVzLIgxW0LiaMQ5dpUCMQXtT_bGgAvIDExyWpC9UM4/edit?usp=sharing)
  - Invite to [Slack](https://join.slack.com/t/aiscienceuchi-pwb7058/shared_invite/zt-33gwx0qd1-wXO6gryIe6R9h7w04ZPlHw)
  - This [Repo](https://github.com/uchicago-dsi/ai-sci-hackathon-2025)

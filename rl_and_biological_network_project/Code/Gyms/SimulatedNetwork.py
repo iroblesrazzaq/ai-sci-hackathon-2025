@@ -4,6 +4,8 @@ from gymnasium import spaces
 from Reward.LinearReward              import LinearReward      as Reward
 from StateReduction.StaticStateSimple import StaticStateSimple as State
 
+from HelperFunctions.check_action import check_action
+
 import numpy as np
 
 class SimulatedNetwork(gym.Env):
@@ -59,11 +61,14 @@ class SimulatedNetwork(gym.Env):
         """
         Apply action and return new state, reward, termination info, and extra info. This process is not time sensitive (i.e. waits for user).
         """
+
+        # Check action:
+        action, msg = check_action(action,self.action_dim)
         
         # Apply action and get response
         spikes = []
         elecs  = []
-        for i in range(self.action_dim):
+        for i in range(4):
             if np.random.random() < 0.1+0.05*i: # This is just to make the system assymetric
                 spikes.append(np.random.random()*20)
                 elecs.append(i)
@@ -71,9 +76,9 @@ class SimulatedNetwork(gym.Env):
             if action[i] == 0:
                 continue
             elecs.append(action[i]-1)
-            spikes.append(max(0,min(20,(i+1)*4+np.random.randn())))
+            spikes.append(max(0,min(19.9999,(i+1)*4+np.random.randn())))
             elecs.append(action[i]%4)
-            spikes.append(max(0,min(20,(i+2)*4+np.random.randn())))
+            spikes.append(max(0,min(19.9999,(i+2)*4+np.random.randn())))
         if len(spikes) == 0:
             response = np.zeros((0,2))
         else:
@@ -85,7 +90,7 @@ class SimulatedNetwork(gym.Env):
             response = np.stack([spikes,elecs],1)
             
         self.stim_id += 1
-
+        
         # Define the space
         self.state  = self.state_object.get_state(response)
         
@@ -97,7 +102,13 @@ class SimulatedNetwork(gym.Env):
         truncated  = False
         
         # Extra information to get information for the user
-        info = {"spikes": spikes, "elecs": elecs, "missed_cyc": 0, "stim_id": self.stim_id, "simulated": True}
+        info = {"spikes": spikes, 
+                "elecs": elecs, 
+                "action": action,
+                "missed_cyc": 0, 
+                "stim_id": self.stim_id, 
+                "simulated": True,
+                "comment": msg}
 
         return self.state,self.reward,terminated,truncated,info
 

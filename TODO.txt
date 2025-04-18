@@ -1,4 +1,0 @@
--) Is torch==2.1.2 still relevant (requirements.txt)? -New version of torch used in updated environments.
--) Updating the jax env: /project/dfreedman/hackathon/hackathon-env-jax/bin/activate - Do we need this?
--) Updating the env: /project/dfreedman/hackathon/hackathon-env/bin/activate - Do we need this?
--) Remove old submission and .py scripts if we are not providing environments for Tensorflow + Jax
