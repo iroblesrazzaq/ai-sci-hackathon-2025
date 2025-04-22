@@ -26,7 +26,10 @@ class DynamicStatePCA():
             if len(spikes[i]) == 0:
                 continue
             for j in range(spikes[i].shape[0]):
-                X[0,int(elecs[i][j]*20+spikes[i][j])] = 1
+                X[i,int(elecs[i][j]*20+spikes[i][j])] = 1
+        
+        self.PCA.fit(X)
+        
         return X
     
     def get_state(self,response):
