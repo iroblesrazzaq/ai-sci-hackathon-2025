@@ -23,7 +23,7 @@ class RealNetworkSync(gym.Env):
     - action_dim       int               Number of stimuli used per applied stimulation pattern (i.e. action). Each stimulus is in {0,1,2,3,4}
     - state_dim        int               State dimension of state/observation space (reduced representation of neuronal activity)
     - circuit_id       int               Each group has 4 networks. Here, you choose which of the 4 networks you use. Must be in {0,1,2,3}
-    - reward_function  func  (optional)  Reward function that receives the neuronal activity as an input. If you do not set it, the default is being used.
+    - reward_object  func  (optional)  Reward function that receives the neuronal activity as an input. If you do not set it, the default is being used.
     - state_function   func  (optional)  This function transforms your neuronal activity into a reduced representation in [-1,1]^n, where [-1,1] are numbers
                                          between -1 and +1 and n is the state_dim defined above.
     
