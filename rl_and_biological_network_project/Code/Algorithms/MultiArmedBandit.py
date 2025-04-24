@@ -7,37 +7,48 @@ class MABAgent:
     
     def __init__(
         self,
-        epsilon: float = 0.1,
+        epsilon: float = 0.9,
+        epsilon_decay: float = 0.999,
         alpha: Optional[float] = None,
         initial_q: float = 0.0,
-        env: Optional[gym.Env] = None,
-        n_actions: Optional[int] = None
+        n_actions: int = 25,
     ):
         """
         Args:
             epsilon: Exploration probability (0.0-1.0)
+            epsilon_decay: Decay rate for epsilon (0.0-1.0)
             alpha: Learning rate (None for sample-average)
             initial_q: Initial Q-value estimates
             env: Gymnasium environment (optional)
-            n_actions: Number of bandit arms (required if no env provided)
+            n_actions: Number of bandit arms (should be multiple of 5, up to 5^5)
         """
-        if env:
-            self.n_actions = env.action_space.n
-        elif n_actions:
-            self.n_actions = n_actions
-        else:
-            raise ValueError("Must provide either env or n_actions")
-            
+        self.n_actions = n_actions
         self.epsilon = epsilon
+        self.epsilon_decay = epsilon_decay
         self.alpha = alpha
-        self.q_values = np.full(self.n_actions, initial_q, dtype=np.float32)
+        self.q_values = np.full(n_actions, initial_q, dtype=np.float32)
         self.action_counts = np.zeros(self.n_actions, dtype=np.int32)
+    
+    def action_map(self, action: int) -> int:
+        """Maps an action number to an actual length 5 action array"""
+        action_arr = np.zeros(5, dtype=np.integer)
+        
+        for i in range(4, -1, -1):
+            action_arr[i] = action % 5
+            action //= 5
+
+        return action_arr
 
     def select_action(self) -> int:
         """ε-greedy action selection"""
         if np.random.random() < self.epsilon:
-            return np.random.randint(self.n_actions)  # Explore
-        return np.argmax(self.q_values)  # Exploit
+            action = np.random.randint(self.n_actions)
+        else: 
+            max_q = np.max(self.q_values)
+            max_indices = np.flatnonzero(self.q_values == max_q)
+            action = np.random.choice(max_indices)  # Random selection from ties
+
+        return action
 
     def update(self, action: int, reward: float):
         """Update Q-values using incremental sample-average or constant alpha"""
@@ -50,32 +61,5 @@ class MABAgent:
             
         self.q_values[action] += alpha * (reward - self.q_values[action])
 
-# Example usage with Gymnasium-style environment
-class BernoulliBandit(gym.Env):
-    """Simple Bernoulli bandit environment for demonstration"""
-    def __init__(self, success_probs):
-        self.success_probs = np.array(success_probs)
-        self.action_space = gym.spaces.Discrete(len(success_probs))
-        self.observation_space = gym.spaces.Discrete(1)
-        
-    def step(self, action):
-        reward = np.random.binomial(1, self.success_probs[action])
-        return (0, reward, False, False, {})  # (obs, reward, terminated, truncated, info)
-    
-    def reset(self):
-        return (0, {})  # (obs, info)
-
-if __name__ == "__main__":
-    # Create environment and agent
-    env = BernoulliBandit(success_probs=[0.1, 0.5, 0.9])
-    agent = MABAgent(epsilon=0.1, env=env)
-    
-    # Training loop
-    obs, info = env.reset()
-    for _ in range(1000):
-        action = agent.select_action()
-        obs, reward, terminated, truncated, info = env.step(action)
-        agent.update(action, reward)
-    
-    print("Final Q-values:", agent.q_values)
-    print("Optimal action:", np.argmax(agent.q_values))
+        # Decay epsilon
+        self.epsilon *= self.epsilon_decay
