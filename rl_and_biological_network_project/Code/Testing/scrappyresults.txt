@@ -1,0 +1,144 @@
+Running epsilon_greedy:   6%|▌         | 1665/28800 [06:56<1:53:02,  4.00it/s]
+epsilon_greedy @ 16200 (TRAIN): Avg=1.63 | Cum=2719 | ε=0.488
+Running epsilon_greedy:  12%|█▏        | 3464/28800 [14:26<1:45:34,  4.00it/s]
+epsilon_greedy @ 18000 (TRAIN): Avg=2.45 | Cum=4416 | ε=0.237
+Running epsilon_greedy:  18%|█▊        | 5263/28800 [21:56<1:38:04,  4.00it/s]
+epsilon_greedy @ 19800 (TRAIN): Avg=2.42 | Cum=4356 | ε=0.116
+Running epsilon_greedy:  25%|██▍       | 7062/28800 [29:26<1:30:52,  3.99it/s]
+epsilon_greedy @ 21600 (EVAL): Avg=2.00 | Cum=2 | ε=0.056
+Running epsilon_greedy:  31%|███       | 8861/28800 [36:56<1:23:05,  4.00it/s]
+epsilon_greedy @ 23400 (EVAL): Avg=2.31 | Cum=4151 | ε=0.056
+Running epsilon_greedy:  37%|███▋      | 10660/28800 [44:26<1:15:35,  4.00it/s]
+epsilon_greedy @ 25200 (EVAL): Avg=2.40 | Cum=4313 | ε=0.056
+Running epsilon_greedy:  43%|████▎     | 12459/28800 [51:56<1:08:07,  4.00it/s]
+epsilon_greedy @ 27000 (EVAL): Avg=2.31 | Cum=4149 | ε=0.056
+Running epsilon_greedy:  50%|████▉     | 14258/28800 [59:27<1:00:38,  4.00it/s]
+NETWORK RESET
+Running ucb:   6%|▌         | 1799/28800 [07:29<1:52:31,  4.00it/s]
+ucb @ 1800 (TRAIN): Avg=5.04 | Cum=9074 | β=2.0
+Running ucb:  12%|█▏        | 3598/28800 [14:59<1:45:04,  4.00it/s]
+ucb @ 3600 (TRAIN): Avg=5.42 | Cum=9758 | β=2.0
+Running ucb:  19%|█▊        | 5397/28800 [22:29<1:37:27,  4.00it/s]
+ucb @ 5400 (TRAIN): Avg=5.47 | Cum=9846 | β=2.0
+Running ucb:  25%|██▍       | 7196/28800 [29:59<1:29:59,  4.00it/s]
+ucb @ 7200 (TRAIN): Avg=5.43 | Cum=9768 | β=2.0
+Running ucb:  31%|███       | 8995/28800 [37:29<1:22:30,  4.00it/s]
+ucb @ 9000 (TRAIN): Avg=4.77 | Cum=8583 | β=2.0
+Running ucb:  37%|███▋      | 10794/28800 [44:59<1:15:00,  4.00it/s]
+ucb @ 10800 (TRAIN): Avg=5.28 | Cum=9500 | β=2.0
+Running ucb:  44%|████▎     | 12593/28800 [52:29<1:07:31,  4.00it/s]
+ucb @ 12600 (TRAIN): Avg=5.38 | Cum=9690 | β=2.0
+Running ucb:  50%|████▉     | 14392/28800 [59:59<1:00:01,  4.00it/s]
+ucb @ 14400 (TRAIN): Avg=5.37 | Cum=9671 | β=2.0
+Running ucb:  56%|█████▌    | 16191/28800 [1:07:29<52:31,  4.00it/s]  
+ucb @ 16200 (TRAIN): Avg=5.42 | Cum=9751 | β=2.0
+Running ucb:  62%|██████▏   | 17990/28800 [1:14:59<45:02,  4.00it/s]  
+ucb @ 18000 (TRAIN): Avg=5.44 | Cum=9784 | β=2.0
+Running ucb:  69%|██████▊   | 19789/28800 [1:22:29<37:32,  4.00it/s]
+ucb @ 19800 (TRAIN): Avg=5.27 | Cum=9484 | β=2.0
+Running ucb:  75%|███████▍  | 21588/28800 [1:29:59<30:02,  4.00it/s]
+ucb @ 21600 (EVAL): Avg=4.00 | Cum=4 | β=2.0
+Running ucb:  81%|████████  | 23387/28800 [1:37:29<22:34,  4.00it/s]
+ucb @ 23400 (EVAL): Avg=3.46 | Cum=6220 | β=2.0
+Running ucb:  87%|████████▋ | 25186/28800 [1:44:59<15:03,  4.00it/s]
+ucb @ 25200 (EVAL): Avg=3.59 | Cum=6462 | β=2.0
+Running ucb:  94%|█████████▎| 26985/28800 [1:52:29<07:33,  4.00it/s]
+ucb @ 27000 (EVAL): Avg=3.47 | Cum=6238 | β=2.0
+Running ucb: 100%|█████████▉| 28784/28800 [2:00:00<00:04,  4.00it/s]
+NETWORK RESET
+Running boltzmann:   6%|▌         | 1799/28800 [07:29<1:51:43,  4.03it/s]
+boltzmann @ 1800 (TRAIN): Avg=-0.89 | Cum=-1602 | T=0.487
+Running boltzmann:  12%|█▏        | 3598/28800 [14:59<1:45:13,  3.99it/s]
+boltzmann @ 3600 (TRAIN): Avg=-0.84 | Cum=-1516 | T=0.237
+Running boltzmann:  19%|█▊        | 5397/28800 [22:30<1:36:58,  4.02it/s]
+boltzmann @ 5400 (TRAIN): Avg=-0.73 | Cum=-1322 | T=0.115
+Running boltzmann:  25%|██▍       | 7196/28800 [29:59<1:30:11,  3.99it/s]
+boltzmann @ 7200 (TRAIN): Avg=0.20 | Cum=357 | T=0.056
+Running boltzmann:  31%|███       | 8995/28800 [37:30<1:23:03,  3.97it/s]
+boltzmann @ 9000 (TRAIN): Avg=0.20 | Cum=352 | T=0.027
+Running boltzmann:  37%|███▋      | 10794/28800 [45:00<1:14:56,  4.00it/s]
+boltzmann @ 10800 (TRAIN): Avg=0.19 | Cum=338 | T=0.013
+Running boltzmann:  44%|████▎     | 12593/28800 [52:30<1:07:24,  4.01it/s]
+boltzmann @ 12600 (TRAIN): Avg=0.18 | Cum=324 | T=0.006
+Running boltzmann:  50%|████▉     | 14392/28800 [1:00:00<1:00:14,  3.99it/s]
+boltzmann @ 14400 (TRAIN): Avg=0.18 | Cum=332 | T=0.003
+Running boltzmann:  56%|█████▌    | 16191/28800 [1:07:30<52:18,  4.02it/s]  
+boltzmann @ 16200 (TRAIN): Avg=0.19 | Cum=338 | T=0.002
+Running boltzmann:  62%|██████▏   | 17990/28800 [1:15:00<45:04,  4.00it/s]  
+boltzmann @ 18000 (TRAIN): Avg=0.19 | Cum=338 | T=0.001
+Running boltzmann:  69%|██████▊   | 19789/28800 [1:22:30<37:32,  4.00it/s]
+boltzmann @ 19800 (TRAIN): Avg=0.19 | Cum=345 | T=0.000
+Running boltzmann:  75%|███████▍  | 21588/28800 [1:30:00<29:52,  4.02it/s]
+boltzmann @ 21600 (EVAL): Avg=0.00 | Cum=0 | T=0.000
+Running boltzmann:  81%|████████  | 23387/28800 [1:37:30<22:28,  4.01it/s]
+boltzmann @ 23400 (EVAL): Avg=0.20 | Cum=362 | T=0.000
+Running boltzmann:  87%|████████▋ | 25186/28800 [1:45:00<15:01,  4.01it/s]
+boltzmann @ 25200 (EVAL): Avg=0.20 | Cum=351 | T=0.000
+Running boltzmann:  94%|█████████▎| 26985/28800 [1:52:30<07:32,  4.01it/s]
+boltzmann @ 27000 (EVAL): Avg=0.19 | Cum=343 | T=0.000
+Running boltzmann: 100%|█████████▉| 28784/28800 [2:00:00<00:04,  4.00it/s]
+NETWORK RESET
+Running thompson:   6%|▌         | 1799/28800 [07:30<1:52:38,  3.99it/s]
+thompson @ 1800 (TRAIN): Avg=3.80 | Cum=6839 | Explored 10/25
+Running thompson:  12%|█▏        | 3598/28800 [15:00<1:44:31,  4.02it/s]
+thompson @ 3600 (TRAIN): Avg=3.79 | Cum=6817 | Explored 10/25
+Running thompson:  19%|█▊        | 5397/28800 [22:30<1:37:54,  3.98it/s]
+thompson @ 5400 (TRAIN): Avg=3.90 | Cum=7026 | Explored 10/25
+Running thompson:  25%|██▍       | 7196/28800 [30:00<1:29:31,  4.02it/s]
+thompson @ 7200 (TRAIN): Avg=3.75 | Cum=6745 | Explored 10/25
+Running thompson:  31%|███       | 8995/28800 [37:30<1:22:36,  4.00it/s]
+thompson @ 9000 (TRAIN): Avg=3.82 | Cum=6884 | Explored 11/25
+Running thompson:  37%|███▋      | 10794/28800 [45:00<1:15:05,  4.00it/s]
+thompson @ 10800 (TRAIN): Avg=3.85 | Cum=6924 | Explored 11/25
+Running thompson:  44%|████▎     | 12593/28800 [52:30<1:07:30,  4.00it/s]
+thompson @ 12600 (TRAIN): Avg=3.79 | Cum=6822 | Explored 11/25
+Running thompson:  50%|████▉     | 14392/28800 [1:00:00<1:00:24,  3.98it/s]
+thompson @ 14400 (TRAIN): Avg=3.77 | Cum=6787 | Explored 11/25
+Running thompson:  56%|█████▌    | 16191/28800 [1:07:30<52:33,  4.00it/s]  
+thompson @ 16200 (TRAIN): Avg=3.76 | Cum=6767 | Explored 11/25
+Running thompson:  62%|██████▏   | 17990/28800 [1:15:00<44:34,  4.04it/s]  
+thompson @ 18000 (TRAIN): Avg=3.78 | Cum=6811 | Explored 11/25
+Running thompson:  69%|██████▊   | 19789/28800 [1:22:30<37:26,  4.01it/s]
+thompson @ 19800 (TRAIN): Avg=3.79 | Cum=6818 | Explored 11/25
+Running thompson:  75%|███████▍  | 21588/28800 [1:30:00<30:06,  3.99it/s]
+thompson @ 21600 (EVAL): Avg=1.00 | Cum=1 | Explored 11/25
+Running thompson:  81%|████████  | 23387/28800 [1:37:30<22:39,  3.98it/s]
+thompson @ 23400 (EVAL): Avg=3.78 | Cum=6804 | Explored 11/25
+Running thompson:  87%|████████▋ | 25186/28800 [1:45:00<14:55,  4.04it/s]
+thompson @ 25200 (EVAL): Avg=3.75 | Cum=6755 | Explored 11/25
+Running thompson:  94%|█████████▎| 26985/28800 [1:52:30<07:34,  4.00it/s]
+thompson @ 27000 (EVAL): Avg=3.76 | Cum=6770 | Explored 11/25
+Running thompson: 100%|█████████▉| 28784/28800 [2:00:00<00:04,  4.00it/s]
+NETWORK RESET
+Running hybrid:   6%|▌         | 1799/28800 [07:29<1:51:49,  4.02it/s]
+hybrid @ 1800 (TRAIN): Avg=-1.93 | Cum=-3469 | ε=0.462, T=0.487
+Running hybrid:  12%|█▏        | 3598/28800 [14:59<1:45:00,  4.00it/s]
+hybrid @ 3600 (TRAIN): Avg=-1.74 | Cum=-3123 | ε=0.225, T=0.237
+Running hybrid:  19%|█▊        | 5397/28800 [22:30<1:37:48,  3.99it/s]
+hybrid @ 5400 (TRAIN): Avg=-1.47 | Cum=-2644 | ε=0.110, T=0.115
+Running hybrid:  25%|██▍       | 7195/28800 [30:00<1:29:56,  4.00it/s]
+hybrid @ 7200 (TRAIN): Avg=-1.39 | Cum=-2494 | ε=0.053, T=0.056
+Running hybrid:  31%|███       | 8994/28800 [37:30<1:22:11,  4.02it/s]
+hybrid @ 9000 (TRAIN): Avg=-1.37 | Cum=-2468 | ε=0.026, T=0.027
+Running hybrid:  37%|███▋      | 10793/28800 [45:00<1:15:11,  3.99it/s]
+hybrid @ 10800 (TRAIN): Avg=-1.41 | Cum=-2529 | ε=0.013, T=0.013
+Running hybrid:  44%|████▎     | 12592/28800 [52:30<1:07:16,  4.02it/s]
+hybrid @ 12600 (TRAIN): Avg=-1.36 | Cum=-2455 | ε=0.006, T=0.006
+Running hybrid:  50%|████▉     | 14391/28800 [1:00:00<1:00:20,  3.98it/s]
+hybrid @ 14400 (TRAIN): Avg=-1.38 | Cum=-2478 | ε=0.003, T=0.003
+Running hybrid:  56%|█████▌    | 16190/28800 [1:07:30<52:38,  3.99it/s]  
+hybrid @ 16200 (TRAIN): Avg=-1.34 | Cum=-2417 | ε=0.001, T=0.002
+Running hybrid:  62%|██████▏   | 17989/28800 [1:15:00<44:56,  4.01it/s]  
+hybrid @ 18000 (TRAIN): Avg=-1.37 | Cum=-2461 | ε=0.001, T=0.001
+Running hybrid:  69%|██████▊   | 19788/28800 [1:22:30<37:27,  4.01it/s]
+hybrid @ 19800 (TRAIN): Avg=-1.37 | Cum=-2459 | ε=0.000, T=0.000
+Running hybrid:  75%|███████▍  | 21587/28800 [1:30:00<30:17,  3.97it/s]
+hybrid @ 21600 (EVAL): Avg=-1.00 | Cum=-1 | ε=0.000, T=0.000
+Running hybrid:  81%|████████  | 23386/28800 [1:37:30<22:33,  4.00it/s]
+hybrid @ 23400 (EVAL): Avg=-1.38 | Cum=-2476 | ε=0.000, T=0.000
+Running hybrid:  87%|████████▋ | 25185/28800 [1:45:00<15:04,  4.00it/s]
+hybrid @ 25200 (EVAL): Avg=-1.35 | Cum=-2438 | ε=0.000, T=0.000
+Running hybrid:  94%|█████████▎| 26984/28800 [1:52:30<07:33,  4.01it/s]
+hybrid @ 27000 (EVAL): Avg=-1.34 | Cum=-2417 | ε=0.000, T=0.000
+Running hybrid: 100%|█████████▉| 28783/28800 [2:00:00<00:04,  4.00it/s]
+NETWORK RESET
