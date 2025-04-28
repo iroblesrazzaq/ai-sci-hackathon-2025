@@ -7,7 +7,7 @@ from collections import deque
 
 # ---- Q-Network ----
 class DQN(nn.Module):
-    def __init__(self, state_dim, action_dim, action_n):
+    def __init__(self, state_dim, action_dim, action_n, inner_dim=128):
         super(DQN, self).__init__()
         self.state_dim = state_dim
         self.action_dim = action_dim
@@ -15,11 +15,11 @@ class DQN(nn.Module):
         self.output_dim = action_n ** action_dim  # total discrete actions
 
         self.net = nn.Sequential(
-            nn.Linear(state_dim, 128),
+            nn.Linear(state_dim, inner_dim),
             nn.ReLU(),
-            nn.Linear(128, 128),
+            nn.Linear(inner_dim, inner_dim),
             nn.ReLU(),
-            nn.Linear(128, self.output_dim)
+            nn.Linear(inner_dim, self.output_dim)
         )
 
     def forward(self, x):

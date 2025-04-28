@@ -47,7 +47,7 @@ def main():
     print(f"Running {strategy} strategy on circuit {circuit_id}")
     print(f"{'='*50}\n")
     
-    train_df, eval_df = run_mab_simulation_full(env, [strategy])
+    train_df, eval_df = run_mab_simulation_full(env, strategy)
     
     # Save results with strategy/circuit identifiers
     train_file = f"train_results_{strategy}_circuit_{circuit_id}.csv"
@@ -62,46 +62,45 @@ def main():
     plot_cumulative_rewards(results_analysis, strategy, circuit_id)
     print(f"Saved visualization to {plot_file}")
 
-def run_mab_simulation_full(env, strategies, update_interval=1800):
-    """Run MAB simulation for specified strategies"""
-    results = {'train': {s: [] for s in strategies}, 'eval': {s: [] for s in strategies}}
+def run_mab_simulation_full(env, strategy, update_interval=1800):
+    """Run MAB simulation for specified strategy"""
+    results = {'train': {strategy: []}, 'eval': {strategy: []}}
     
-    for strategy in strategies:
-        agent = MABAgent(strategy=strategy, n_actions=25, alpha=0.1)
-        state, info = env.reset()
-        stim_id = 1  # Initial dummy value
-        
-        with tqdm(total=21600+7200, desc=f"Running {strategy}") as pbar:
-            while stim_id > 0:
-                action_idx = agent.select_action()
-                state, reward, terminated, truncated, info = env.step(
-                    agent.action_map(action_idx)
-                )
-                stim_id = info['stim_id']
+    agent = MABAgent(strategy=strategy, n_actions=25, alpha=0.1)
+    state, info = env.reset()
+    stim_id = 1  # Initial dummy value
+    
+    with tqdm(total=21600+7200, desc=f"Running {strategy}") as pbar:
+        while stim_id > 0:
+            action_idx = agent.select_action()
+            state, reward, terminated, truncated, info = env.step(
+                agent.action_map(action_idx)
+            )
+            stim_id = info['stim_id']
 
-                if stim_id == 0:
-                    tqdm.write("Network reset detected")
-                    break
+            if stim_id == 0:
+                tqdm.write("Network reset detected")
+                break
 
-                # Phase determination
-                phase = 'train' if stim_id < 21600 else 'eval'
-                results[phase][strategy].append(reward)
+            # Phase determination
+            phase = 'train' if stim_id < 21600 else 'eval'
+            results[phase][strategy].append(reward)
 
-                # Agent updates only during training
-                if phase == 'train':
-                    agent.update(action_idx, reward)
+            # Agent updates only during training
+            if phase == 'train':
+                agent.update(action_idx, reward)
 
-                # Progress updates
-                if stim_id % update_interval == 0:
-                    log_progress(stim_id, phase, agent, results, strategy)
-                
-                pbar.update(1)
-                if terminated or truncated:
-                    break
+            # Progress updates
+            if stim_id % update_interval == 0:
+                log_progress(stim_id, phase, agent, results, strategy)
+            
+            pbar.update(1)
+            if terminated or truncated:
+                break
 
     return pd.DataFrame(results['train']), pd.DataFrame(results['eval'])
 
-def log_progress(self, stim_id, phase, agent, results, strategy):
+def log_progress(stim_id, phase, agent, results, strategy):
     """Helper method for logging progress updates"""
     try:
         window = results[phase][strategy][-1800:]
