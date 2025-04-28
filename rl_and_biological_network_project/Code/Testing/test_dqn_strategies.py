@@ -4,6 +4,9 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import random
+import pandas as pd
+import matplotlib.pyplot as plt
+import time
 
 # Add parent directory to path
 import sys
@@ -16,8 +19,8 @@ if str(root_dir) not in sys.path:
 from Gyms.SimulatedNetworkSync import SimulatedNetworkSync
 from Gyms.RealNetworkSync import RealNetworkSync
 from Algorithms.DQN import DQN, ReplayBuffer
-import pandas as pd
-import matplotlib.pyplot as plt
+from Reward.LinearReward import LinearReward
+from Reward.TrainingReward import TrainingReward
 
 # Initialize the environment parameters
 action_dim = 5 # Number of dimensions in each action (5 time steps)
@@ -97,16 +100,16 @@ def select_action(env, state, policy_net, epsilon, action_dim, action_n):
     return action, action_idx
 
 # ---- Train Loop ----
-def train(env, episodes=200, steps_per_episode=100, batch_size=64, gamma=0.99, 
+def train(env, episodes=200, steps_per_episode=100, batch_size=8, gamma=0.99, 
           epsilon_start=1.0, epsilon_end=0.01, epsilon_decay=0.995,
-          buffer_capacity=10000, lr=1e-3, target_update_freq=10):
+          buffer_capacity=100, lr=1e-3, target_update_freq=10, inner_dim=128):
 
     state_dim = env.observation_space.shape[0]
     action_dim = env.action_space.nvec.shape[0]
     action_n = env.action_space.nvec[0]
 
-    policy_net = DQN(state_dim, action_dim, action_n)
-    target_net = DQN(state_dim, action_dim, action_n)
+    policy_net = DQN(state_dim, action_dim, action_n, inner_dim)
+    target_net = DQN(state_dim, action_dim, action_n, inner_dim)
     target_net.load_state_dict(policy_net.state_dict())
     target_net.eval()
 
@@ -125,7 +128,11 @@ def train(env, episodes=200, steps_per_episode=100, batch_size=64, gamma=0.99,
         for step in range(steps_per_episode):
             action, action_idx = select_action(env, state, policy_net, epsilon, action_dim, action_n)
 
-            next_state, reward, _, _, _ = env.step(action)
+            next_state, reward, _, _, info = env.step(action)
+            if info['missed_cyc']:
+                print("MISSED CYCLE")
+                print(info)
+                
             replay_buffer.push(state, action_idx, reward, next_state, False)  # done=False always
 
             state = next_state
@@ -153,7 +160,7 @@ def train(env, episodes=200, steps_per_episode=100, batch_size=64, gamma=0.99,
                 optimizer.step()
                 
                 episode_loss += loss.item()
-                
+        
         avg_loss = episode_loss / steps_per_episode if steps_per_episode > 0 else 0
         logger.log(episode, total_reward, epsilon, avg_loss)
 
@@ -164,13 +171,15 @@ def train(env, episodes=200, steps_per_episode=100, batch_size=64, gamma=0.99,
         if episode % target_update_freq == 0:
             target_net.load_state_dict(policy_net.state_dict())
 
-    logger.save(f"dqn_training_{circuit_id}")
-    logger.plot(f"dqn_performance_{circuit_id}")
+    logger.save(f"results/dqn_training_{circuit_id}_LinearReward_buffer100_epsdec97_innerdim16")
+    logger.plot(f"results/dqn_performance_{circuit_id}_LinearReward_buffer100_epsdec97_innerdim16")
 
     return policy_net
 
 
 def test_policy(env, model, episodes=10, steps_per_episode=100, render=False):
+    env.reward_object = LinearReward() # Reset for testing
+    print(f"TESTING WITH REWARD FUNCTION {env.reward_object}")
     model.eval()
     
     # Initialize data collection
@@ -204,7 +213,7 @@ def test_policy(env, model, episodes=10, steps_per_episode=100, render=False):
         'Total_Reward': test_rewards,
         'Avg_Reward': [r/steps_per_episode for r in test_rewards]
     })
-    results_df.to_csv(f'dqn_test_results_{circuit_id}.csv', index=False)
+    results_df.to_csv(f'results/dqn_test_results_{circuit_id}_LinearReward_buffer100_epsdec97_innerdim16.csv', index=False)
 
     # Generate plots
     plt.figure(figsize=(12, 6))
@@ -224,15 +233,15 @@ def test_policy(env, model, episodes=10, steps_per_episode=100, render=False):
     plt.grid(True)
 
     plt.tight_layout()
-    plt.savefig(f'dqn_test_performance_{circuit_id}.png')
+    plt.savefig(f'results/dqn_test_performance_{circuit_id}_LinearReward_buffer100_epsdec97_innerdim16.png')
     plt.close()
 
     return results_df
 
 # env = SimulatedNetworkSync(action_dim=action_dim, state_dim=state_dim)
-env = RealNetworkSync(action_dim=action_dim, state_dim=state_dim, circuit_id=circuit_id)
-trained_model = train(env, episodes=150, steps_per_episode=100, epsilon_decay=0.998)
+# env = SimulatedNetworkSync(action_dim=action_dim, state_dim=state_dim, stim_period=100, reward_object=TrainingReward())
+env = RealNetworkSync(action_dim=action_dim, state_dim=state_dim, circuit_id=circuit_id, reward_object=LinearReward())
+trained_model = train(env, episodes=160, steps_per_episode=100, epsilon_decay=0.97, inner_dim=16)
 
-
-test_policy(env, trained_model, episodes=50, steps_per_episode=100)
+test_policy(env, trained_model, episodes=40, steps_per_episode=100)
 

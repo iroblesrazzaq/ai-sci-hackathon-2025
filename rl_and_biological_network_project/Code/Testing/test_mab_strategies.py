@@ -16,6 +16,8 @@ if str(root_dir) not in sys.path:
 
 from Gyms.RealNetworkSync import RealNetworkSync
 from Algorithms.MultiArmedBandit import MABAgent, MAB_STRATEGIES
+from Reward.TrainingReward import TrainingReward
+from Reward.LinearReward import LinearReward
 
 def parse_arguments():
     """Parse command-line arguments"""
@@ -24,6 +26,7 @@ def parse_arguments():
                        help=f'MAB strategy to use. Choices: {MAB_STRATEGIES}')
     parser.add_argument('--circuit_id', type=int, required=True, choices=[0,1,2,3],
                        help='Circuit ID (0-3)')
+    parser.add_argument('--reward', required=True, choices=["TrainingReward", "LinearReward"], help=f'Reward strategy to use. Choices: [TrainingReward, LinearReward]')
     return parser.parse_args()
 
 def main():
@@ -35,31 +38,35 @@ def main():
     state_dim = 4
     action_dim = 5
     
+    reward_name = args.reward
+    reward = TrainingReward() if reward_name == "TrainingReward" else LinearReward()
+    
     # Create environment
     env = RealNetworkSync(
         action_dim=action_dim,
         state_dim=state_dim,
-        circuit_id=circuit_id
+        circuit_id=circuit_id,
+        reward_object=reward
     )
     
     # Run simulation for specified strategy
     print(f"\n{'='*50}")
-    print(f"Running {strategy} strategy on circuit {circuit_id}")
+    print(f"Running {strategy} strategy on circuit {circuit_id} with {reward_name}")
     print(f"{'='*50}\n")
     
     train_df, eval_df = run_mab_simulation_full(env, strategy)
     
     # Save results with strategy/circuit identifiers
-    train_file = f"train_results_{strategy}_circuit_{circuit_id}.csv"
-    eval_file = f"eval_results_{strategy}_circuit_{circuit_id}.csv"
+    train_file = f"train_results_{strategy}_circuit_{circuit_id}_{reward_name}.csv"
+    eval_file = f"eval_results_{strategy}_circuit_{circuit_id}_{reward_name}.csv"
     train_df.to_csv(train_file, index=False)
     eval_df.to_csv(eval_file, index=False)
     print(f"\nSaved results to {train_file} and {eval_file}")
     
     # Generate and save analysis
     results_analysis = analyze_results(train_df, eval_df)
-    plot_file = f"cumulative_rewards_{strategy}_circuit_{circuit_id}.png"
-    plot_cumulative_rewards(results_analysis, strategy, circuit_id)
+    plot_file = f"cumulative_rewards_{strategy}_circuit_{circuit_id}_{reward_name}.png"
+    plot_cumulative_rewards(results_analysis, strategy, circuit_id, reward_name)
     print(f"Saved visualization to {plot_file}")
 
 def run_mab_simulation_full(env, strategy, update_interval=1800):
@@ -71,7 +78,7 @@ def run_mab_simulation_full(env, strategy, update_interval=1800):
     stim_id = 1  # Initial dummy value
     
     with tqdm(total=21600+7200, desc=f"Running {strategy}") as pbar:
-        while stim_id > 0:
+        while stim_id > 0:            
             action_idx = agent.select_action()
             state, reward, terminated, truncated, info = env.step(
                 agent.action_map(action_idx)
@@ -89,6 +96,9 @@ def run_mab_simulation_full(env, strategy, update_interval=1800):
             # Agent updates only during training
             if phase == 'train':
                 agent.update(action_idx, reward)
+            else:
+                # Ensure we are being evaluated on the LinearReward
+                env.reward_object = LinearReward()
 
             # Progress updates
             if stim_id % update_interval == 0:
@@ -136,7 +146,7 @@ def analyze_results(train_df, eval_df):
         }
     }
 
-def plot_cumulative_rewards(results_analysis, strategy, circuit_id):
+def plot_cumulative_rewards(results_analysis, strategy, circuit_id, reward_name):
     """Visualize results with strategy/circuit context"""
     plt.figure(figsize=(14, 8))
     
@@ -162,7 +172,7 @@ def plot_cumulative_rewards(results_analysis, strategy, circuit_id):
     plt.grid(alpha=0.2)
     
     plt.tight_layout()
-    plt.savefig(f"cumulative_rewards_{strategy}_circuit_{circuit_id}.png")
+    plt.savefig(f"cumulative_rewards_{strategy}_circuit_{circuit_id}_{reward_name}.png")
     plt.close()
 
 if __name__ == "__main__":
