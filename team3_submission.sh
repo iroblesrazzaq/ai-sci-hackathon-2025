@@ -18,5 +18,7 @@ source activate /project/ai4s-hackathon/ai-sci-hackathon-2025/envs/rl+bnpytorch
 source /project/ai4s-hackathon/team-3/henry/venvs/venv/bin/activate
 
 # Run 
-cd /project/ai4s-hackathon/team-3/henry/ai-sci-hackathon-2025/rl_and_biological_network_project/Code/Testing
-python /project/ai4s-hackathon/team-3/henry/ai-sci-hackathon-2025/rl_and_biological_network_project/Code/Testing/test_dqn_strategies.py
+python /project/ai4s-hackathon/team-3/henry/ai-sci-hackathon-2025/rl_and_biological_network_project/Code/FINAL_DQN_LOOP.py --circuit_id 0 --reward LinearReward
+
+# cd /project/ai4s-hackathon/team-3/henry/ai-sci-hackathon-2025/rl_and_biological_network_project/Code/Testing
+# python /project/ai4s-hackathon/team-3/henry/ai-sci-hackathon-2025/rl_and_biological_network_project/Code/Testing/test_dqn_strategies.py

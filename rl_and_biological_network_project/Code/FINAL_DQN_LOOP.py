@@ -110,106 +110,106 @@ def select_action(env, state, policy_net, epsilon, action_dim, action_n, phase):
     return action, action_idx
 
 def train(env, circuit_id, reward_name, 
-          batch_size=32, gamma=0.99, epsilon_start=1.0, 
-          epsilon_end=0.01, epsilon_decay=0.9992, lr=1e-3, 
+          batch_size=128, gamma=0.99, epsilon_start=1.0, 
+          epsilon_end=0.001, epsilon_decay=0.9992, lr=1e-3, 
           target_update_freq=1000, buffer_capacity=100000,
           update_interval=1800):
     
-    state_dim = env.observation_space.shape[0]
-    action_dim = env.action_space.nvec.shape[0]
-    action_n = env.action_space.nvec[0]
-
-    policy_net = DQN(state_dim, action_dim, action_n, 128).to(device)
-    target_net = DQN(state_dim, action_dim, action_n, 128).to(device)
-    target_net.load_state_dict(policy_net.state_dict())
-    target_net.eval()
-
-    optimizer = optim.Adam(policy_net.parameters(), lr=lr)
-    replay_buffer = ReplayBuffer(buffer_capacity)
-    logger = TrainingLogger()
+    session_counter = 1  # Track training sessions
     
-    epsilon = epsilon_start
-    total_reward = 0
-    episode_loss = 0
-    step_count = 0
+    while True:  # Continuous training loop for multiple resets
+        # Initialize fresh components for each session
+        state_dim = env.observation_space.shape[0]
+        action_dim = env.action_space.nvec.shape[0]
+        action_n = env.action_space.nvec[0]
 
-    state, info = env.reset()
-    stim_id = info.get('stim_id', 1)
-    phase = 'train'
+        policy_net = DQN(state_dim, action_dim, action_n, 64).to(device)
+        target_net = DQN(state_dim, action_dim, action_n, 64).to(device)
+        target_net.load_state_dict(policy_net.state_dict())
+        target_net.eval()
 
-    with tqdm(total=21600+7200, desc=f"Training DQN") as pbar:
-        while stim_id > 0:
-            action, action_idx = select_action(
-                env, state, policy_net, epsilon, action_dim, action_n, phase
-            )
+        optimizer = optim.Adam(policy_net.parameters(), lr=lr)
+        replay_buffer = ReplayBuffer(buffer_capacity)
+        logger = TrainingLogger()
+        
+        epsilon = epsilon_start
+        total_reward = 0
+        episode_loss = 0
+        step_count = 0
 
-            next_state, reward, terminated, truncated, info = env.step(action)
-            stim_id = info.get('stim_id', 0)
-            
-            # Handle phase transitions
-            new_phase = 'train' if stim_id < 21600 else 'eval'
-            if new_phase != phase:
-                phase = new_phase
-                if phase == 'eval':
-                    env.reward_object = LinearReward()
-                    target_net.load_state_dict(policy_net.state_dict())
+        # Environment reset for new session
+        state, info = env.reset()
+        stim_id = info.get('stim_id', 1)
+        phase = 'train'
 
-            replay_buffer.push(state, action_idx, reward, next_state, False)
-            state = next_state
-            total_reward += reward
-            step_count += 1
-
-            # Training step
-            if phase == 'train' and len(replay_buffer) > batch_size:
-                states, actions, rewards, next_states, dones = replay_buffer.sample(batch_size)
-                
-                states = torch.FloatTensor(states).to(device)
-                actions = torch.LongTensor(actions).unsqueeze(1).to(device)
-                rewards = torch.FloatTensor(rewards).unsqueeze(1).to(device)
-                next_states = torch.FloatTensor(next_states).to(device)
-                dones = torch.BoolTensor(dones).unsqueeze(1).to(device)
-
-                q_values = policy_net(states).gather(1, actions)
-                with torch.no_grad():
-                    next_q_values = target_net(next_states).max(1)[0].unsqueeze(1)
-                    target_q = rewards + gamma * next_q_values * (~dones)
-
-                loss = nn.MSELoss()(q_values, target_q)
-                optimizer.zero_grad()
-                loss.backward()
-                optimizer.step()
-                episode_loss += loss.item()
-
-                # Decay epsilon
-                epsilon = max(epsilon_end, epsilon * epsilon_decay)
-
-                # Update target network
-                if step_count % target_update_freq == 0:
-                    target_net.load_state_dict(policy_net.state_dict())
-
-            # Logging
-            if step_count % update_interval == 0:
-                avg_loss = episode_loss / update_interval if episode_loss > 0 else 0
-                logger.log(step_count, total_reward, epsilon, avg_loss, phase)
-                episode_loss = 0
-                total_reward = 0
-                
-                tqdm.write(
-                    f"Step {step_count} ({phase.upper()}) | "
-                    f"Avg Reward: {np.mean(logger.rewards[-update_interval:]):.2f} | "
-                    f"ε: {epsilon:.3f} | Loss: {avg_loss:.4f}"
+        with tqdm(total=21600+7200, desc=f"Training Session {session_counter}") as pbar:
+            while stim_id > 0:
+                action, action_idx = select_action(
+                    env, state, policy_net, epsilon, action_dim, action_n, phase
                 )
 
-            pbar.update(1)
-            if terminated or truncated or stim_id == 0:
-                break
+                next_state, reward, terminated, truncated, info = env.step(action)
+                stim_id = info.get('stim_id', 0)
+                
+                # Handle phase transitions
+                new_phase = 'train' if stim_id < 21600 else 'eval'
+                if new_phase != phase:
+                    phase = new_phase
+                    if phase == 'eval':
+                        env.reward_object = LinearReward()
+                        target_net.load_state_dict(policy_net.state_dict())
 
-    # Save final results
-    prefix = f"dqn_circuit_{circuit_id}_{reward_name}"
-    logger.save(prefix)
-    logger.plot(prefix)
-    
-    return policy_net
+                replay_buffer.push(state, action_idx, reward, next_state, False)
+                state = next_state
+                total_reward += reward
+                step_count += 1
+
+                # Training step
+                if phase == 'train' and len(replay_buffer) > batch_size:
+                    states, actions, rewards, next_states, dones = replay_buffer.sample(batch_size)
+                    
+                    states = torch.FloatTensor(states).to(device)
+                    actions = torch.LongTensor(actions).unsqueeze(1).to(device)
+                    rewards = torch.FloatTensor(rewards).unsqueeze(1).to(device)
+                    next_states = torch.FloatTensor(next_states).to(device)
+                    dones = torch.BoolTensor(dones).unsqueeze(1).to(device)
+
+                    q_values = policy_net(states).gather(1, actions)
+                    with torch.no_grad():
+                        next_q_values = target_net(next_states).max(1)[0].unsqueeze(1)
+                        target_q = rewards + gamma * next_q_values * (~dones)
+
+                    loss = nn.MSELoss()(q_values, target_q)
+                    optimizer.zero_grad()
+                    loss.backward()
+                    optimizer.step()
+                    episode_loss += loss.item()
+
+                    # Decay epsilon
+                    epsilon = max(epsilon_end, epsilon * epsilon_decay)
+
+                    # Update target network
+                    if step_count % target_update_freq == 0:
+                        target_net.load_state_dict(policy_net.state_dict())
+
+                # Logging
+                if step_count % update_interval == 0:
+                    avg_loss = episode_loss / update_interval if episode_loss > 0 else 0
+                    logger.log(step_count, total_reward, epsilon, avg_loss, phase)
+                    episode_loss = 0
+                    total_reward = 0
+                    
+                    tqdm.write(
+                        f"Step {step_count} ({phase.upper()}) | "
+                        f"Avg Reward: {np.mean(logger.rewards[-update_interval:]):.2f} | "
+                        f"ε: {epsilon:.3f} | Loss: {avg_loss:.4f}"
+                    )
+
+                pbar.update(1)
+                if terminated or truncated or (stim_id % 28800) == 0:
+                    break
+        
+        session_counter += 1
 
 def main():
     args = parse_arguments()
@@ -230,11 +230,6 @@ def main():
         circuit_id=args.circuit_id,
         reward_name=args.reward
     )
-    
-    # Save model
-    model_path = f"dqn_model_{args.circuit_id}_{args.reward}.pt"
-    torch.save(trained_model.state_dict(), model_path)
-    print(f"Saved model to {model_path}")
 
 if __name__ == "__main__":
     main()

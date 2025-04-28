@@ -255,7 +255,7 @@ def test_policy(env, model, episodes=10, steps_per_episode=100, render=False):
 # env = SimulatedNetworkSync(action_dim=action_dim, state_dim=state_dim)
 # env = SimulatedNetworkSync(action_dim=action_dim, state_dim=state_dim, stim_period=100, reward_object=TrainingReward())
 env = RealNetworkSync(action_dim=action_dim, state_dim=state_dim, circuit_id=circuit_id, reward_object=LinearReward())
-trained_model = train(env, episodes=4, steps_per_episode=50, epsilon_decay=0.97, inner_dim=16)
+trained_model = train(env, episodes=4, steps_per_episode=50, epsilon_decay=0.9992, inner_dim=16)
 
 test_policy(env, trained_model, episodes=1, steps_per_episode=50)
 
