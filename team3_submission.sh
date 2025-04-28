@@ -5,7 +5,8 @@
 #SBATCH --qos=schmidt
 #SBATCH --gres=gpu:1
 #SBATCH --time 20:00
-
+#SBATCH -o dqn_submission.out
+#SBATCH -e dqn_submission.err
 
 module load python/miniforge-24.1.2 # python 3.10
 
@@ -17,4 +18,5 @@ source activate /project/ai4s-hackathon/ai-sci-hackathon-2025/envs/rl+bnpytorch
 source /project/ai4s-hackathon/team-3/henry/venvs/venv/bin/activate
 
 # Run 
+cd /project/ai4s-hackathon/team-3/henry/ai-sci-hackathon-2025/rl_and_biological_network_project/Code/Testing
 python /project/ai4s-hackathon/team-3/henry/ai-sci-hackathon-2025/rl_and_biological_network_project/Code/Testing/test_dqn_strategies.py

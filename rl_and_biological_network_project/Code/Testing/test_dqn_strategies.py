@@ -25,7 +25,9 @@ from Reward.TrainingReward import TrainingReward
 # Initialize the environment parameters
 action_dim = 5 # Number of dimensions in each action (5 time steps)
 state_dim = 10 # Number of features in the state representation
-circuit_id = 0
+circuit_id = 3
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class TrainingLogger:
     def __init__(self):
@@ -92,7 +94,7 @@ def select_action(env, state, policy_net, epsilon, action_dim, action_n):
         action_idx = action_to_index(action, action_n)
     else:
         with torch.no_grad():
-            state_tensor = torch.FloatTensor(state).unsqueeze(0)
+            state_tensor = torch.FloatTensor(state).unsqueeze(0).to(device)
             q_values = policy_net(state_tensor)
             action_idx = torch.argmax(q_values).item()
             action = index_to_action(action_idx, action_dim, action_n)
@@ -108,8 +110,8 @@ def train(env, episodes=200, steps_per_episode=100, batch_size=8, gamma=0.99,
     action_dim = env.action_space.nvec.shape[0]
     action_n = env.action_space.nvec[0]
 
-    policy_net = DQN(state_dim, action_dim, action_n, inner_dim)
-    target_net = DQN(state_dim, action_dim, action_n, inner_dim)
+    policy_net = DQN(state_dim, action_dim, action_n, inner_dim).to(device)
+    target_net = DQN(state_dim, action_dim, action_n, inner_dim).to(device)
     target_net.load_state_dict(policy_net.state_dict())
     target_net.eval()
 
@@ -140,26 +142,38 @@ def train(env, episodes=200, steps_per_episode=100, batch_size=8, gamma=0.99,
 
             # Train step
             if len(replay_buffer) >= batch_size:
+                from time import time
+                
+                first = time()
                 states, actions, rewards, next_states, dones = replay_buffer.sample(batch_size)
+                second = time()
 
-                states = torch.FloatTensor(states)
-                actions = torch.LongTensor(actions).unsqueeze(1)
-                rewards = torch.FloatTensor(rewards).unsqueeze(1)
-                next_states = torch.FloatTensor(next_states)
-                dones = torch.BoolTensor(dones).unsqueeze(1)
+                states = torch.FloatTensor(states).to(device)
+                actions = torch.LongTensor(actions).unsqueeze(1).to(device)
+                rewards = torch.FloatTensor(rewards).unsqueeze(1).to(device)
+                next_states = torch.FloatTensor(next_states).to(device)
+                dones = torch.BoolTensor(dones).unsqueeze(1).to(device)
+                third = time()
 
                 q_values = policy_net(states).gather(1, actions)
+                middle = time()
 
                 with torch.no_grad():
                     next_q_values = target_net(next_states).max(1)[0].unsqueeze(1)
                     target_q = rewards + gamma * next_q_values * (~dones)
+                fourth = time()
 
                 loss = nn.MSELoss()(q_values, target_q)
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
                 
+                fifth = time()
+                
                 episode_loss += loss.item()
+                
+                print(f'Sampling {second-first}, torch setup {third-second}, q values {fourth-third}, optimizer {fifth-fourth}')
+                print(f'first half {middle-third} second {fourth-middle}')
         
         avg_loss = episode_loss / steps_per_episode if steps_per_episode > 0 else 0
         logger.log(episode, total_reward, epsilon, avg_loss)
@@ -192,7 +206,7 @@ def test_policy(env, model, episodes=10, steps_per_episode=100, render=False):
         total_reward = 0
 
         for step in range(steps_per_episode):
-            state_tensor = torch.FloatTensor(state).unsqueeze(0)
+            state_tensor = torch.FloatTensor(state).unsqueeze(0).to(device)
             with torch.no_grad():
                 q_values = model(state_tensor)
                 action_idx = torch.argmax(q_values).item()
@@ -241,7 +255,7 @@ def test_policy(env, model, episodes=10, steps_per_episode=100, render=False):
 # env = SimulatedNetworkSync(action_dim=action_dim, state_dim=state_dim)
 # env = SimulatedNetworkSync(action_dim=action_dim, state_dim=state_dim, stim_period=100, reward_object=TrainingReward())
 env = RealNetworkSync(action_dim=action_dim, state_dim=state_dim, circuit_id=circuit_id, reward_object=LinearReward())
-trained_model = train(env, episodes=160, steps_per_episode=100, epsilon_decay=0.97, inner_dim=16)
+trained_model = train(env, episodes=4, steps_per_episode=50, epsilon_decay=0.97, inner_dim=16)
 
-test_policy(env, trained_model, episodes=40, steps_per_episode=100)
+test_policy(env, trained_model, episodes=1, steps_per_episode=50)
 
